@@ -3,11 +3,38 @@ package lexer
 import (
 	"fmt"
 	"os"
+	"unicode"
+)
+
+type Type int
+
+const (
+	Identifier = iota
+	Keyword    = iota
+	Number     = iota
+	Operator   = iota
+	Equals     = iota
 )
 
 type token struct {
 	Value      string
 	Identifier int16
+}
+
+var Reserved = map[string]Type{
+	"test": Keyword,
+}
+
+func tellOperator(r rune) bool {
+	switch r {
+	case '+', '-', '*', '/':
+		return true
+	}
+	return false
+}
+
+func makeToken(val string, ident int16) token {
+	return token{Value: val, Identifier: ident}
 }
 
 func Tokenizer() string {
@@ -16,16 +43,41 @@ func Tokenizer() string {
 		return "Problem"
 	}
 
-	tokens := []string{}
+	tokens := []token{}
+	Word := ""
 
 	for i := range data {
-		if string(data[i]) == "\n" {
-			continue
+		currCharcter := rune(data[i])
+
+		if unicode.IsLetter(currCharcter) || len(Word) != 0 {
+			if !unicode.IsLetter(currCharcter) {
+				_, ok := Reserved[Word]
+				if ok {
+					tokens = append(tokens, makeToken(Word, Keyword))
+				} else {
+					tokens = append(tokens, makeToken(Word, Identifier))
+				}
+				Word = ""
+
+			} else {
+				Word += string(currCharcter)
+				continue
+			}
 		}
-		tokens = append(tokens, string(data[i]))
+
+		if unicode.IsDigit(currCharcter) {
+			tokens = append(tokens, makeToken(string(currCharcter), Number))
+		} else if tellOperator(currCharcter) {
+			tokens = append(tokens, makeToken(string(currCharcter), Operator))
+		} else if currCharcter == '=' {
+			tokens = append(tokens, makeToken(string(currCharcter), Equals))
+		}
 	}
 
-	fmt.Println(tokens)
+	for x := range tokens {
+		fmt.Printf("%+v\n", tokens[x])
+	}
 
-	return "This works"
+	return "a"
+
 }
