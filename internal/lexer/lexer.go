@@ -14,6 +14,7 @@ const (
 	Number     = iota
 	Operator   = iota
 	Equals     = iota
+	EOF        = iota
 )
 
 type token struct {
@@ -37,10 +38,10 @@ func makeToken(val string, ident int16) token {
 	return token{Value: val, Identifier: ident}
 }
 
-func Tokenizer() string {
+func Tokenizer() []token {
 	data, err := os.ReadFile("test.ine")
 	if err != nil {
-		return "Problem"
+		fmt.Print("err")
 	}
 
 	tokens := []token{}
@@ -74,10 +75,8 @@ func Tokenizer() string {
 		}
 	}
 
-	for x := range tokens {
-		fmt.Printf("%+v\n", tokens[x])
-	}
+	tokens = append(tokens, makeToken("EOF", EOF))
 
-	return "a"
+	return tokens
 
 }
