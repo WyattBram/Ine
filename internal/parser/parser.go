@@ -1,14 +1,17 @@
 package parser
 
 import (
-	"fmt"
+	//"fmt"
+	"github.com/WyattBram/Ine/internal/ast"
 	"github.com/WyattBram/Ine/internal/lexer"
 )
 
-func Parse() {
-	tokens := lexer.Tokenizer()
+type parser struct {
+	tokens   []lexer.Token
+	position int
+	//tokens := lexer.Tokenizer()
+}
 
-	for x := range tokens {
-		fmt.Printf("%+v\n", tokens[x])
-	}
+func Parse() {
+
 }

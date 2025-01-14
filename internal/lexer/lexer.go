@@ -17,8 +17,8 @@ const (
 	EOF        = iota
 )
 
-type token struct {
-	Value      string
+type Token struct {
+	Lexemes    string
 	Identifier int16
 }
 
@@ -34,17 +34,17 @@ func tellOperator(r rune) bool {
 	return false
 }
 
-func makeToken(val string, ident int16) token {
-	return token{Value: val, Identifier: ident}
+func makeToken(val string, ident int16) Token {
+	return Token{Lexemes: val, Identifier: ident}
 }
 
-func Tokenizer() []token {
+func Tokenizer() []Token {
 	data, err := os.ReadFile("test.ine")
 	if err != nil {
 		fmt.Print("err")
 	}
 
-	tokens := []token{}
+	tokens := []Token{}
 	Word := ""
 
 	for i := range data {
