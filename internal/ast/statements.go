@@ -1,7 +1,13 @@
 package ast
 
-type program struct {
-	statements []Statement
+type Program struct {
+	Statements []Statement
 }
 
-func (p program) stmt() {}
+func (p Program) stmt() {}
+
+type ExpressionStatement struct {
+	Expression Expresion
+}
+
+func (p ExpressionStatement) stmt() {}

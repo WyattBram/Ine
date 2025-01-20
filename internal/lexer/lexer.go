@@ -19,7 +19,7 @@ const (
 
 type Token struct {
 	Lexemes    string
-	Identifier int16
+	Identifier Type
 }
 
 var Reserved = map[string]Type{
@@ -34,7 +34,7 @@ func tellOperator(r rune) bool {
 	return false
 }
 
-func makeToken(val string, ident int16) Token {
+func makeToken(val string, ident Type) Token {
 	return Token{Lexemes: val, Identifier: ident}
 }
 

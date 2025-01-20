@@ -1,12 +1,18 @@
 package ast
 
 type binaryExpresion struct {
-	left      Expresion
-	right     Expresion
-	opperator string
+	left  Expresion
+	right Expresion
+	// opperator string
 }
 
-func (n binaryExpresion) expr() {}
+func (b binaryExpresion) expr() {}
+
+type StringLiteral struct {
+	Value string
+}
+
+func (s StringLiteral) expr() {}
 
 type NumericalLiteral struct {
 	value float32
@@ -14,8 +20,14 @@ type NumericalLiteral struct {
 
 func (n NumericalLiteral) expr() {}
 
+type MathmaticalLiteral struct {
+	value string
+}
+
+func (m MathmaticalLiteral) expr() {}
+
 type Identifier struct {
 	identifier string
 }
 
-func (n Identifier) expr() {}
+func (i Identifier) expr() {}
