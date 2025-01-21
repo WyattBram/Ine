@@ -15,13 +15,13 @@ type StringLiteral struct {
 func (s StringLiteral) expr() {}
 
 type NumericalLiteral struct {
-	value float32
+	Value float64
 }
 
 func (n NumericalLiteral) expr() {}
 
 type MathmaticalLiteral struct {
-	value string
+	Value string
 }
 
 func (m MathmaticalLiteral) expr() {}

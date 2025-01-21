@@ -15,6 +15,7 @@ const (
 	Operator   = iota
 	Equals     = iota
 	EOF        = iota
+	String     = iota
 )
 
 type Token struct {

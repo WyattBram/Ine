@@ -28,21 +28,40 @@ func TestParse() {
 func Parse(t []lexer.Token) ast.Program {
 	Body := make([]ast.Statement, 0)
 
+	p := makeParser(t)
+
+	for p.containsTokens() {
+		Body := append(Body, parseStatement(p))
+	}
+
 	return ast.Program{
 		Statements: Body,
 	}
 }
 
-func currToken(p *parser) lexer.Token {
+func makeParser(t []lexer.Token) *parser {
+	createTokenLookup()
+	p := parser{
+		tokens:   t,
+		position: 0,
+	}
+	return &p
+}
+
+func (p *parser) tokenType() lexer.Type {
+	return p.currToken().Identifier
+}
+
+func (p *parser) currToken() lexer.Token {
 	return p.tokens[p.position]
 }
 
-func nextToken(p *parser) lexer.Token {
-	curr := currToken(p)
+func (p *parser) nextToken() lexer.Token {
+	curr := p.currToken()
 	p.position += 1
 	return curr
 }
 
-func containsTokens(p *parser) bool {
-	return p.position < len(p.tokens) && currToken(p).Identifier != lexer.EOF
+func (p *parser) containsTokens() bool {
+	return p.position < len(p.tokens) && p.currToken().Identifier != lexer.EOF
 }
