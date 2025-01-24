@@ -108,6 +108,7 @@ func Tokenizer() []Token {
 	tokens := []Token{}
 	Word := ""
 	Pass := false
+	digit := false
 
 	for i := range data {
 		if Pass {
@@ -121,10 +122,26 @@ func Tokenizer() []Token {
 				tokens = append(tokens, makeToken("==", Equivelent))
 				Pass = true
 			} else {
-				tokens = append(tokens, makeToken(string(currCharcter), Equals))
+				tokens = append(tokens, makeToken("=", Equals))
+			}
+			continue
+
+		}
+
+		if unicode.IsDigit(currCharcter) || digit {
+
+			if !unicode.IsDigit(currCharcter) {
+
+				tokens = append(tokens, makeToken(Word, Number))
+				digit = false
+				Word = ""
+			} else {
+				Word += string(currCharcter)
+				digit = true
+				continue
+
 			}
 
-			fmt.Print(Word)
 		} else if unicode.IsLetter(currCharcter) || len(Word) != 0 || tellCompare(string(currCharcter)) {
 			if !unicode.IsLetter(currCharcter) && !tellCompare(string(currCharcter)) {
 				_, ok := Reserved[Word]
@@ -141,8 +158,6 @@ func Tokenizer() []Token {
 				Word += string(currCharcter)
 				continue
 			}
-		} else if unicode.IsDigit(currCharcter) {
-			tokens = append(tokens, makeToken(string(currCharcter), Number))
 		} else if tellOperator(currCharcter) {
 			tokens = append(tokens, makeToken(string(currCharcter), whichOperator(currCharcter)))
 		}
