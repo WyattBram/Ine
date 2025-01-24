@@ -31,7 +31,7 @@ func Parse(t []lexer.Token) ast.Program {
 	p := makeParser(t)
 
 	for p.containsTokens() {
-		Body := append(Body, parseStatement(p))
+		//Body := append(Body, parseStatement(p))
 	}
 
 	return ast.Program{
