@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	ast := parser.Parse(lexer.Tokenizer())
+	//parser.TestParse()
 
+	ast := parser.Parse(lexer.Tokenizer())
 	litter.Dump(ast)
 }

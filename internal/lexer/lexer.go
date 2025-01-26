@@ -3,8 +3,14 @@ package lexer
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"unicode"
 )
+
+type Token struct {
+	Lexemes    string
+	Identifier Type
+}
 
 type Type int
 
@@ -32,11 +38,6 @@ const (
 	NULL          = iota
 )
 
-type Token struct {
-	Lexemes    string
-	Identifier Type
-}
-
 var Reserved = map[string]Type{
 	"fn":    Keyword,
 	"int":   Keyword,
@@ -47,65 +48,98 @@ var Reserved = map[string]Type{
 	"or":    Or,
 }
 
-func tellOperator(r rune) bool {
-	switch r {
-	case '+', '-', '*', '/', '%':
-		return true
-	}
-	return false
-}
+type regex regexp.Regexp
 
-func tellCompare(s string) bool {
-	switch s {
-	case ">", "<", "<=", ">=", "==", "=", "!=":
-		return true
-	}
-	return false
-}
+var (
+	WordRGX          = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9_]*$`)
+	GreaterThanRGX   = regexp.MustCompile(`^>$`)
+	GreaterEqualRGX  = regexp.MustCompile(`^>=$`)
+	LessThanRGX      = regexp.MustCompile(`^<$`)
+	LessThanEqualRGX = regexp.MustCompile(`^<=$`)
+	EquivlentRGX     = regexp.MustCompile(`^==$`)
+	NotEquivelentRGX = regexp.MustCompile(`^!=$`)
+	EqualsRGX        = regexp.MustCompile(`^=$`)
+	AddRGX           = regexp.MustCompile(`^\+$`)
+	SubtractRGX      = regexp.MustCompile(`^-$`)
+	MultiplyRGX      = regexp.MustCompile(`^\*$`)
+	DivideRGX        = regexp.MustCompile(`^/$`)
+	ModRGX           = regexp.MustCompile(`^%$`)
+	NumberRGX        = regexp.MustCompile(`^\d*\.?\d*$`)
+	NotRGX           = regexp.MustCompile(`^!$`)
+)
 
-func whichOperator(r rune) Type {
-	switch r {
-	case '+':
-		return Plus
+func matchStringTo(s string) Type {
 
-	case '-':
-		return Minus
-
-	case '*':
-		return Multiply
-
-	case '/':
-		return Divide
-
-	case '%':
-		return Mod
-	}
-	return NULL
-}
-
-func whichCompare(s string) Type {
-	switch s {
-	case ">":
+	if WordRGX.MatchString(s) {
+		return defineWord(s)
+	} else if NumberRGX.MatchString(s) {
+		return Number
+	} else if GreaterThanRGX.MatchString(s) {
 		return GreaterThan
-
-	case "<":
-		return LessThan
-
-	case ">=":
+	} else if GreaterEqualRGX.MatchString(s) {
 		return GreaterEqual
-
-	case "<=":
+	} else if LessThanRGX.MatchString(s) {
+		return LessThan
+	} else if LessThanEqualRGX.MatchString(s) {
 		return LessEqual
-
-	case "!=":
+	} else if EquivlentRGX.MatchString(s) {
+		return Equivelent
+	} else if NotEquivelentRGX.MatchString(s) {
 		return NotEquivelent
-
+	} else if EqualsRGX.MatchString(s) {
+		return Equals
+	} else if AddRGX.MatchString(s) {
+		return Plus
+	} else if SubtractRGX.MatchString(s) {
+		return Minus
+	} else if MultiplyRGX.MatchString(s) {
+		return Multiply
+	} else if DivideRGX.MatchString(s) {
+		return Divide
+	} else if ModRGX.MatchString(s) {
+		return Mod
+	} else if NotRGX.MatchString(s) {
+		return Not
+	} else {
+		return NULL
 	}
-	return NULL
+
 }
 
 func makeToken(val string, ident Type) Token {
 	return Token{Lexemes: val, Identifier: ident}
+}
+
+func fileToWords(byteList []byte) []string {
+	wordList := []string{}
+
+	currWord := ""
+	for byte := range byteList {
+		currByte := byteList[byte]
+		if unicode.IsSpace(rune(currByte)) {
+			if len(currWord) == 0 {
+				continue
+			}
+			wordList = append(wordList, currWord)
+			currWord = ""
+		} else {
+			currWord += string(currByte)
+		}
+	}
+	return wordList
+}
+
+func defineWord(word string) Type {
+
+	typeReserved, reserved := Reserved[word]
+
+	//we go reserved
+	if reserved {
+		return typeReserved
+	}
+
+	return Identifier
+
 }
 
 func Tokenizer() []Token {
@@ -114,66 +148,16 @@ func Tokenizer() []Token {
 		fmt.Print("err")
 	}
 
-	tokens := []Token{}
-	Word := ""
-	Pass := false
-	digit := false
+	wordList := fileToWords(data)
+	tokenList := []Token{}
 
-	for i := range data {
-		if Pass {
-			Pass = false
-			continue
-		}
-		currCharcter := rune(data[i])
+	for word := range wordList {
+		tokenList = append(tokenList, makeToken(wordList[word], matchStringTo(wordList[word])))
 
-		if currCharcter == '=' && len(Word) == 0 {
-			if i < len(data)-1 && data[i+1] == '=' {
-				tokens = append(tokens, makeToken("==", Equivelent))
-				Pass = true
-			} else {
-				tokens = append(tokens, makeToken("=", Equals))
-			}
-			continue
-
-		}
-
-		if unicode.IsDigit(currCharcter) || digit {
-
-			if !unicode.IsDigit(currCharcter) {
-
-				tokens = append(tokens, makeToken(Word, Number))
-				digit = false
-				Word = ""
-			} else {
-				Word += string(currCharcter)
-				digit = true
-				continue
-
-			}
-
-		} else if unicode.IsLetter(currCharcter) || len(Word) != 0 || tellCompare(string(currCharcter)) || currCharcter == '!' {
-			if !unicode.IsLetter(currCharcter) && !tellCompare(string(currCharcter)) && currCharcter != '!' {
-				_, ok := Reserved[Word]
-				if ok {
-					tokens = append(tokens, makeToken(Word, Keyword))
-				} else if tellCompare(Word) {
-					tokens = append(tokens, makeToken(Word, whichCompare(Word)))
-				} else {
-					tokens = append(tokens, makeToken(Word, Identifier))
-				}
-
-				Word = ""
-			} else {
-				Word += string(currCharcter)
-				continue
-			}
-		} else if tellOperator(currCharcter) {
-			tokens = append(tokens, makeToken(string(currCharcter), whichOperator(currCharcter)))
-		}
 	}
 
-	tokens = append(tokens, makeToken("EOF", EOF))
+	tokenList = append(tokenList, makeToken("EOF", EOF))
 
-	return tokens
+	return tokenList
 
 }

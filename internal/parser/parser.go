@@ -1,9 +1,7 @@
 package parser
 
 import (
-	//"fmt"
 	"fmt"
-
 	"github.com/WyattBram/Ine/internal/ast"
 	"github.com/WyattBram/Ine/internal/lexer"
 )
@@ -15,13 +13,11 @@ type parser struct {
 }
 
 func TestParse() {
-	par := parser{
-		tokens:   lexer.Tokenizer(),
-		position: 0,
-	}
 
-	for x := range par.tokens {
-		fmt.Print(par.tokens[x])
+	Words := lexer.Tokenizer()
+
+	for x := range Words {
+		fmt.Println(Words[x])
 	}
 }
 
