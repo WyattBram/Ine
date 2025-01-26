@@ -23,7 +23,7 @@ const (
 
 type statementHandler func(p *parser) ast.Statement
 type nudHandler func(p *parser) ast.Expresion
-type leftDenotedHandler func(p *parser, left ast.Expresion, bp bindingPower) ast.Statement
+type leftDenotedHandler func(p *parser, left ast.Expresion, bp bindingPower) ast.Expresion
 
 type statementLookup map[lexer.Type]statementHandler
 type nudLookup map[lexer.Type]nudHandler
@@ -54,4 +54,20 @@ func createTokenLookup() {
 	nud(lexer.Number, primary, parsePrimary)
 	nud(lexer.String, primary, parsePrimary)
 	nud(lexer.Identifier, primary, parsePrimary)
+
+	led(lexer.Or, logical, parseBinary)
+	led(lexer.And, logical, parseBinary)
+
+	led(lexer.LessThan, relational, parseBinary)
+	led(lexer.LessEqual, relational, parseBinary)
+	led(lexer.GreaterThan, relational, parseBinary)
+	led(lexer.GreaterEqual, relational, parseBinary)
+	led(lexer.Equivelent, relational, parseBinary)
+	led(lexer.NotEquivelent, relational, parseBinary)
+
+	led(lexer.Plus, additive, parseBinary)
+	led(lexer.Minus, additive, parseBinary)
+	led(lexer.Multiply, multiplicative, parseBinary)
+	led(lexer.Divide, multiplicative, parseBinary)
+	led(lexer.Mod, multiplicative, parseBinary)
 }

@@ -1,12 +1,14 @@
 package ast
 
-type binaryExpresion struct {
-	left  Expresion
-	right Expresion
-	// opperator string
+import "github.com/WyattBram/Ine/internal/lexer"
+
+type BinaryExpresion struct {
+	Left     Expresion
+	Operator lexer.Token
+	Right    Expresion
 }
 
-func (b binaryExpresion) expr() {}
+func (b BinaryExpresion) expr() {}
 
 type StringLiteral struct {
 	Value string

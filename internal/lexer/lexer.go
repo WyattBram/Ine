@@ -9,24 +9,27 @@ import (
 type Type int
 
 const (
-	Identifier   = iota
-	Keyword      = iota
-	Number       = iota
-	Plus         = iota
-	Minus        = iota
-	Multiply     = iota
-	Divide       = iota
-	Mod          = iota
-	Equals       = iota
-	EOF          = iota
-	String       = iota
-	GreaterThan  = iota
-	LessThan     = iota
-	Not          = iota
-	GreaterEqual = iota
-	LessEqual    = iota
-	Equivelent   = iota
-	NULL         = iota
+	Identifier    = iota
+	Keyword       = iota
+	Number        = iota
+	Plus          = iota
+	Minus         = iota
+	Multiply      = iota
+	Divide        = iota
+	Mod           = iota
+	Equals        = iota
+	EOF           = iota
+	String        = iota
+	GreaterThan   = iota
+	LessThan      = iota
+	Not           = iota
+	GreaterEqual  = iota
+	LessEqual     = iota
+	Equivelent    = iota
+	NotEquivelent = iota
+	And           = iota
+	Or            = iota
+	NULL          = iota
 )
 
 type Token struct {
@@ -40,6 +43,8 @@ var Reserved = map[string]Type{
 	"str":   Keyword,
 	"bool":  Keyword,
 	"float": Keyword,
+	"and":   And,
+	"or":    Or,
 }
 
 func tellOperator(r rune) bool {
@@ -52,7 +57,7 @@ func tellOperator(r rune) bool {
 
 func tellCompare(s string) bool {
 	switch s {
-	case ">", "<", "<=", ">=", "==", "=":
+	case ">", "<", "<=", ">=", "==", "=", "!=":
 		return true
 	}
 	return false
@@ -91,6 +96,10 @@ func whichCompare(s string) Type {
 
 	case "<=":
 		return LessEqual
+
+	case "!=":
+		return NotEquivelent
+
 	}
 	return NULL
 }
@@ -142,8 +151,8 @@ func Tokenizer() []Token {
 
 			}
 
-		} else if unicode.IsLetter(currCharcter) || len(Word) != 0 || tellCompare(string(currCharcter)) {
-			if !unicode.IsLetter(currCharcter) && !tellCompare(string(currCharcter)) {
+		} else if unicode.IsLetter(currCharcter) || len(Word) != 0 || tellCompare(string(currCharcter)) || currCharcter == '!' {
+			if !unicode.IsLetter(currCharcter) && !tellCompare(string(currCharcter)) && currCharcter != '!' {
 				_, ok := Reserved[Word]
 				if ok {
 					tokens = append(tokens, makeToken(Word, Keyword))
