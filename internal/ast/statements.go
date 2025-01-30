@@ -11,3 +11,11 @@ type ExpressionStatement struct {
 }
 
 func (p ExpressionStatement) stmt() {}
+
+type VariableDeclerationStatement struct {
+	VariableIdentifier string
+	AssignedValue      Expresion
+}
+
+func (p VariableDeclerationStatement) stmt() {
+}

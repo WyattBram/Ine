@@ -16,3 +16,7 @@ func parseStatement(p *parser) ast.Statement {
 	}
 
 }
+
+func parserVariableDecleration(p *parser) ast.Statement {
+	return ast.VariableDeclerationStatement{}
+}

@@ -70,4 +70,6 @@ func createTokenLookup() {
 	led(lexer.Multiply, multiplicative, parseBinary)
 	led(lexer.Divide, multiplicative, parseBinary)
 	led(lexer.Mod, multiplicative, parseBinary)
+
+	// statement(lexer.)
 }
