@@ -1,10 +1,14 @@
-# Ine Programming Language  
+# Pratt Parser
 
-Ine is an interpreted, statically typed programming language designed for simplicity and efficiency. Leveraging a Pratt parser for its syntax analysis, Ine aims to provide an intuitive yet powerful programming experience for developers.  
+This project implements a standalone **Pratt parser** for parsing mathematical and logical expressions. It includes a basic lexer and demonstrates how top-down operator precedence parsing can be used to build a simple and flexible parser.
 
-## Features  
+## Features
 
-- **Interpreted**: Ine programs are executed directly, making development quick and straightforward.  
-- **Statically Typed**: Type checking occurs at runtime, ensuring type safety without sacrificing performance.  
-- **Pratt Parser**: The language uses a Pratt parser to handle syntax analysis, offering a flexible and extendable way to define grammar.  
+- **Pratt Parser**  
+  A clean implementation of top-down operator precedence parsing, suitable for interpreters and compilers.
 
+- **Lexer**  
+  Tokenizes input expressions to prepare them for parsing.
+
+- **Educational Tool**  
+  Designed for learning and experimenting with expression parsing techniques.
